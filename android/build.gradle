@@ -1,9 +1,6 @@
 plugins {
     id "com.android.library"
 }
-def safeExtGet(prop, fallback) {
-    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
-}
 
 android {
     compileSdkVersion 30
@@ -27,8 +24,8 @@ repositories {
     }
 
     google()
-    jcenter()
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
