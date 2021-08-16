@@ -1,60 +1,47 @@
-apply plugin: 'com.android.library'
-
-def safeExtGet(prop, fallback) {
-    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
-}
-
-buildscript {
-    repositories {
-        google()
-        jcenter()
-    }
-
-    dependencies {
-        //noinspection GradleDependency
-        classpath rootProject.ext.has('gradleBuildTools') ? rootProject.ext.get('gradleBuildTools') : 'com.android.tools.build:gradle:3.3.1'
-    }
+plugins {
+    id "com.android.library"
+    id "maven-publish"
 }
 
 android {
-    compileSdkVersion safeExtGet('compileSdkVersion', 28)
-    buildToolsVersion safeExtGet('buildToolsVersion', '28.0.3')
- 
+    compileSdkVersion 30
+
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
 
     defaultConfig {
-        minSdkVersion safeExtGet('minSdkVersion', 16)
-        targetSdkVersion safeExtGet('targetSdkVersion', 28)
-        versionCode 1
-        versionName "1.0"
-	ndk {
+        minSdkVersion 21
+        targetSdkVersion 30
+        ndk {
             abiFilters "armeabi-v7a", "x86"
         }
-
     }
 }
 
 repositories {
-    mavenLocal()
-    google()
-    jcenter()
     if (project == rootProject) {
-        maven {
-            url "https://dl.bintray.com/wordpress-mobile/react-native-mirror/"
-        }
+        maven { url "https://a8c-libs.s3.amazonaws.com/android/react-native-mirror" }
     } else {
         // When building as a dep, the RN's maven repo is locally in the node_modules folder
         def nodeModulesPath = "${project.buildDir}/../../node_modules/"
         maven { url "${nodeModulesPath}/react-native/android" }
     }
+
+    google()
+    mavenCentral()
+    jcenter()
 }
 
 dependencies {
-
-    implementation 'com.facebook.react:react-native:0.64.0'
+    if (project == rootProject) {
+        // If this is the root project (e.g. Jitpack), specify a version
+        implementation 'com.facebook.react:react-native:0.64.0'
+    } else {
+        //noinspection GradleDynamicVersion
+        api "com.facebook.react:react-native:+"
+    }
 
     implementation('com.google.android.exoplayer:exoplayer:2.9.3') {
         exclude group: 'com.android.support'
@@ -69,5 +56,16 @@ dependencies {
         exclude group: 'com.squareup.okhttp3', module: 'okhttp'
     }
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
+}
 
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.wordpress-mobile'
+                artifactId = 'react-native-video'
+            }
+        }
+    }
 }
