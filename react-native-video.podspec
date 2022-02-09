@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.description    = package['description']
   s.license        = package['license']
   s.author         = package['author']
-  s.homepage       = 'https://github.com/brentvatne/react-native-video'
+  s.homepage       = 'https://github.com/react-native-community/react-native-video'
   s.source       = { :git => "https://github.com/wordpress-mobile/react-native-video.git", :tag => "#{s.version}" }
 
   s.ios.deployment_target = "8.0"
@@ -29,7 +29,11 @@ Pod::Spec.new do |s|
     s.static_framework = true
   end
 
-  s.dependency "React"
+  s.dependency "React-Core"
 
   s.default_subspec = "Video"
+
+  s.xcconfig = {
+    'OTHER_LDFLAGS': '-ObjC',
+  }
 end
