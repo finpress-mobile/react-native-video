@@ -55,8 +55,9 @@ dependencies {
     implementation('com.google.android.exoplayer:extension-okhttp:2.13.3') {
         exclude group: 'com.squareup.okhttp3', module: 'okhttp'
     }
-    //noinspection NotInterpolated
-    implementation 'com.squareup.okhttp3:okhttp:${OKHTTP_VERSION}'
+    if (project.hasProperty("OKHTTP_VERSION")) {
+        implementation "com.squareup.okhttp3:okhttp:${project.property("OKHTTP_VERSION")}"
+    }
 }
 
 afterEvaluate {
