@@ -1,12 +1,10 @@
-apply plugin: 'com.android.library'
-
-def safeExtGet(prop, fallback) {
-    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+plugins {
+    id "com.android.library"
+    id "maven-publish"
 }
 
 android {
-    compileSdkVersion safeExtGet('compileSdkVersion', 28)
-    buildToolsVersion safeExtGet('buildToolsVersion', '28.0.3')
+    compileSdkVersion 34
 
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
@@ -14,21 +12,38 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion safeExtGet('minSdkVersion', 16)
-        targetSdkVersion safeExtGet('targetSdkVersion', 28)
-        versionCode 1
-        versionName "1.0"
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        minSdkVersion 24
+        targetSdkVersion 34
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
+        }
     }
 }
 
+repositories {
+    if (project == rootProject) {
+        maven { url "https://a8c-libs.s3.amazonaws.com/android/react-native-mirror" }
+    } else {
+        // When building as a dep, the RN's maven repo is locally in the node_modules folder
+        def nodeModulesPath = "${project.buildDir}/../../node_modules/"
+        maven { url "${nodeModulesPath}/react-native/android" }
+    }
+
+    google()
+    mavenCentral()
+    jcenter()
+}
+
 dependencies {
-    implementation "com.facebook.react:react-native:${safeExtGet('reactNativeVersion', '+')}"
-    implementation('com.google.android.exoplayer:exoplayer:2.13.2') {
+    if (project == rootProject) {
+        // If this is the root project (e.g. Jitpack), specify a version
+        implementation 'com.facebook.react:react-native:0.69.4'
+    } else {
+        //noinspection GradleDynamicVersion
+        api "com.facebook.react:react-native:+"
+    }
+
+    implementation('com.google.android.exoplayer:exoplayer:2.13.3') {
         exclude group: 'com.android.support'
     }
 
@@ -37,9 +52,20 @@ dependencies {
     implementation "androidx.core:core:1.1.0"
     implementation "androidx.media:media:1.1.0"
 
-    implementation('com.google.android.exoplayer:extension-okhttp:2.13.2') {
+    implementation('com.google.android.exoplayer:extension-okhttp:2.13.3') {
         exclude group: 'com.squareup.okhttp3', module: 'okhttp'
     }
     implementation 'com.squareup.okhttp3:okhttp:${OKHTTP_VERSION}'
+}
 
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.wordpress-mobile'
+                artifactId = 'react-native-video'
+            }
+        }
+    }
 }

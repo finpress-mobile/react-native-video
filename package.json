@@ -1,6 +1,6 @@
 {
     "name": "react-native-video",
-    "version": "5.2.0",
+    "version": "5.2.0-wp-7",
     "description": "A <Video /> element for react-native",
     "main": "Video.js",
     "license": "MIT",
@@ -31,16 +31,15 @@
         "@react-native-community/eslint-config": "0.0.7",
         "babel-eslint": "10.0.3",
         "eslint": "6.8.0",
-        "react": "^16.12.0",
-        "react-dom": "^16.12.0",
-        "react-hot-loader": "^4.12.19",
-        "react-native": "^0.61.5",
-        "react-native-windows": "^0.61.0-0"
+        "react": "^17.0.1",
+        "react-dom": "^17.0.1",
+        "react-hot-loader": "^4.6.3",
+        "react-native": "^0.64.0",
+        "react-native-windows": "^0.64.0"
     },
     "dependencies": {
-        "keymirror": "^0.1.1",
         "prop-types": "^15.7.2",
-        "shaka-player": "^2.5.9"
+        "deprecated-react-native-prop-types": "^2.2.0"
     },
     "scripts": {
         "lint": "yarn eslint *.js"
